@@ -1,26 +1,142 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+@theme {
+  --color-washi: #f5f3f0;
+  --color-washi-deep: #ebe7e2;
+  --color-sumi: #1c1b1a;
+  --color-sumi-soft: #2c2a28;
+  --color-clay: #6b5f57;
+  --color-sunbeam: #f2cf8a;
+
+  --font-sans: var(--font-manrope), ui-sans-serif, system-ui, sans-serif;
+
+  --ease-drape: cubic-bezier(0.76, 0, 0.24, 1);
+  --ease-settle: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  background: var(--color-washi);
+  color: var(--color-sumi);
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans);
+  font-weight: 400;
+  line-height: 1.6;
+  background: var(--color-washi);
 }
+
+/* Lenis */
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+::selection {
+  background: var(--color-sunbeam);
+  color: var(--color-sumi);
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-sunbeam);
+  outline-offset: 3px;
+  border-radius: 999px;
+}
+
+/* Pleated fabric: vertical folds catching light */
+.pleats {
+  background-image: repeating-linear-gradient(
+    90deg,
+    rgb(255 255 255 / 0.18) 0px,
+    rgb(255 255 255 / 0.05) 14px,
+    rgb(0 0 0 / 0.1) 30px,
+    rgb(0 0 0 / 0.02) 44px,
+    rgb(255 255 255 / 0.18) 56px
+  );
+}
+
+/* Infinite marquee: two identical rows slide by their own width */
+.marquee {
+  animation: marquee var(--marquee-speed, 40s) linear infinite;
+}
+@keyframes marquee {
+  to {
+    transform: translateX(-100%);
+  }
+}
+
+/* A band of light that passes over text once it is in view */
+.sheen {
+  background-image: linear-gradient(
+    100deg,
+    var(--color-sumi) 40%,
+    #c9b28f 48%,
+    #f5e3bf 50%,
+    #c9b28f 52%,
+    var(--color-sumi) 60%
+  );
+  background-size: 300% 100%;
+  background-position: 100% 0;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.sheen.is-lit {
+  animation: sheen 2.6s cubic-bezier(0.45, 0, 0.2, 1) forwards;
+}
+@keyframes sheen {
+  to {
+    background-position: 0% 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .marquee,
+  .sheen.is-lit {
+    animation: none;
+  }
+}
+
+/* Light Studio slider */
+.studio-range {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 28px;
+  background: transparent;
+  cursor: pointer;
+}
+.studio-range::-webkit-slider-runnable-track {
+  height: 6px;
+  border-radius: 999px;
+  background: linear-gradient(to right, var(--color-sumi) var(--fill), var(--color-washi-deep) var(--fill));
+}
+.studio-range::-moz-range-track {
+  height: 6px;
+  border-radius: 999px;
+  background: linear-gradient(to right, var(--color-sumi) var(--fill), var(--color-washi-deep) var(--fill));
+}
+.studio-range::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 22px;
+  height: 22px;
+  margin-top: -8px;
+  border-radius: 999px;
+  background: #fff;
+  box-shadow: 0 0 0 1px rgb(0 0 0 / 0.08), 0 4px 12px rgb(0 0 0 / 0.18);
+}
+.studio-range::-moz-range-thumb {
+  width: 22px;
+  height: 22px;
+  border: 0;
+  border-radius: 999px;
+  background: #fff;
+  box-shadow: 0 0 0 1px rgb(0 0 0 / 0.08), 0 4px 12px rgb(0 0 0 / 0.18);
+}
+
