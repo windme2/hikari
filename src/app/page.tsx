@@ -2,6 +2,8 @@ import Nav from "@/components/Nav";
 import Hero from "@/components/Hero";
 import Ticker from "@/components/Ticker";
 import Catalog from "@/components/Catalog";
+import LightStudio from "@/components/LightStudio";
+import Rooms from "@/components/Rooms";
 import About from "@/components/About";
 import Reasons from "@/components/Reasons";
 import Reviews from "@/components/Reviews";
@@ -16,6 +18,8 @@ export default function Home() {
         <Hero />
         <Ticker />
         <Catalog />
+        <LightStudio />
+        <Rooms />
         <About />
         <Reasons />
         <Reviews />
