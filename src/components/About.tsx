@@ -6,7 +6,7 @@ import { aboutStats } from "@/lib/content";
 
 const milestones = [
   { year: "2014", text: "A two-person workroom in Nonthaburi" },
-  { year: "2019", text: "Showroom opens on Pradiphat Road" },
+  { year: "2019", text: "Showroom opens in Bangna" },
   { year: "2026", text: "4,800+ windows across greater Bangkok" },
 ];
 

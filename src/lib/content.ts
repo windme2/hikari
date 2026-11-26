@@ -5,8 +5,8 @@ export const brand = {
   name: "Hikari",
   phone: "+66 2 123 4567",
   phoneHref: "tel:+6621234567",
-  address: "88/12 Pradiphat Rd, Bangkok",
-  hours: "Tue–Sun 10:00–19:00",
+  address: "Bangna, Bangkok",
+  hours: "Mon–Fri 10:00–19:00",
   line: "https://line.me/",
 };
 

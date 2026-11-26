@@ -222,7 +222,7 @@ export default function Nav() {
                 Call {brand.phone}
               </a>
             </div>
-            <p className="px-4 pb-2 pt-4 text-[13px] text-sumi/50">{brand.address} · Tue–Sun 10:00–19:00</p>
+            <p className="px-4 pb-2 pt-4 text-[13px] text-sumi/50">{brand.address} · {brand.hours}</p>
           </motion.div>
         )}
       </AnimatePresence>
