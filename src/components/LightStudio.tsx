@@ -7,10 +7,12 @@ import Arrow from "./Arrow";
 import { RevealText, settle } from "./ui/motion";
 import { fabrics, photos } from "@/lib/content";
 
+// tint: multiplied over the photo · grade: soft-light colour grade · shade: colour the room falls to as light drops
 const times = [
-  { id: "morning", label: "Morning", base: 0.85, tint: "rgb(255 214 160 / 0.18)" },
-  { id: "noon", label: "Noon", base: 1, tint: "rgb(255 255 255 / 0)" },
-  { id: "evening", label: "Evening", base: 0.5, tint: "rgb(255 140 60 / 0.28)" },
+  { id: "morning", label: "Morning", base: 0.85, tint: "rgb(255 214 160 / 0.18)", grade: "rgb(255 200 140 / 0)", shade: "#0d0c0b" },
+  { id: "noon", label: "Noon", base: 1, tint: "rgb(255 255 255 / 0)", grade: "rgb(255 200 140 / 0)", shade: "#0d0c0b" },
+  // Evening: golden-hour grade over the whole room, sinking into warm brown rather than grey
+  { id: "evening", label: "Evening", base: 0.7, tint: "rgb(255 210 165 / 0.28)", grade: "rgb(255 170 100 / 0.22)", shade: "#120b07" },
 ] as const;
 
 const spring = { stiffness: 110, damping: 22, mass: 0.6 };
@@ -55,7 +57,8 @@ export default function LightStudio() {
             className="-z-10 object-cover"
           />
           <motion.div aria-hidden className="absolute inset-0 -z-10 mix-blend-multiply" animate={{ backgroundColor: time.tint }} transition={{ duration: 0.8 }} />
-          <motion.div aria-hidden className="absolute inset-0 bg-[#0d0c0b]" style={{ opacity: shade }} />
+          <motion.div aria-hidden className="absolute inset-0 -z-10 mix-blend-soft-light" animate={{ backgroundColor: time.grade }} transition={{ duration: 0.8 }} />
+          <motion.div aria-hidden className="absolute inset-0" style={{ opacity: shade }} animate={{ backgroundColor: time.shade }} transition={{ duration: 0.8 }} />
 
           {[0, 1].map((side) => (
             <motion.div
