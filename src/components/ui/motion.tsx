@@ -16,6 +16,7 @@ export function RevealText({
   stagger = 0.045,
   as: Tag = "h2",
   immediate = false,
+  lineClassName = "block",
 }: {
   text: string;
   className?: string;
@@ -24,6 +25,8 @@ export function RevealText({
   as?: "h1" | "h2" | "h3" | "p";
   /** animate on mount instead of when scrolled into view */
   immediate?: boolean;
+  /** class for each `\n`-separated line; use e.g. "md:block" to let lines flow together on small screens */
+  lineClassName?: string;
 }) {
   const lines = text.split("\n");
   const MotionTag = motion[Tag];
@@ -36,7 +39,7 @@ export function RevealText({
       aria-label={text.replace(/\n/g, " ").replace(/\*/g, "")}
     >
       {lines.map((line, li) => (
-        <span key={li} className="block" aria-hidden>
+        <span key={li} className={lineClassName} aria-hidden>
           {line.split(" ").map((word, wi) => {
             const bold = word.startsWith("*") && word.endsWith("*");
             const w = bold ? word.slice(1, -1) : word;
@@ -55,6 +58,7 @@ export function RevealText({
               </span>
             );
           })}
+          {li < lines.length - 1 ? " " : null}
         </span>
       ))}
     </MotionTag>

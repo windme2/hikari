@@ -20,6 +20,7 @@ export default function Reasons() {
     <section className="mx-auto max-w-[1440px] px-5 pb-24 sm:px-8 sm:pb-32">
       <RevealText
         text={"4 reasons clients find us\neasy and reliable to work with"}
+        lineClassName="md:block"
         className="text-[clamp(1.6rem,2.8vw,2.4rem)] font-semibold uppercase leading-[1.1] tracking-[-0.02em]"
       />
 

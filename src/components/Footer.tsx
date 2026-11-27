@@ -26,7 +26,7 @@ export default function Footer() {
 
   return (
     <footer className="mx-auto max-w-[1440px] px-5 pb-8 pt-20 sm:px-8 sm:pt-28">
-      <div className="flex flex-col-reverse gap-10 lg:flex-row lg:items-end lg:justify-between">
+      <div className="flex flex-col gap-10 md:flex-col-reverse lg:flex-row lg:items-end lg:justify-between">
         <div>
           <p
             ref={mark}
