@@ -1,7 +1,6 @@
 "use client";
 
 import { AnimatePresence, motion, useMotionValueEvent, useScroll } from "motion/react";
-import { useLenis } from "lenis/react";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import Arrow from "./Arrow";
 import { brand } from "@/lib/content";
@@ -21,6 +20,10 @@ export default function Nav() {
   const [solid, setSolid] = useState(false);
   const [hidden, setHidden] = useState(false);
   const [open, setOpen] = useState(false);
+  // Where the page was when the menu opened; scrolling away from it closes the menu
+  const openedAt = useRef<number | null>(null);
+  // True while the menu rolls up after a scroll, so the header waits before sliding away
+  const [closing, setClosing] = useState(false);
 
   useMotionValueEvent(scrollY, "change", (y) => {
     const prev = scrollY.getPrevious() ?? 0;
@@ -30,18 +33,20 @@ export default function Nav() {
     if (y < 120) setHidden(false);
     else if (y > prev + 1) setHidden(true);
     else if (y < prev - 4) setHidden(false);
+    if (openedAt.current !== null && Math.abs(y - openedAt.current) > 40) {
+      openedAt.current = null;
+      setClosing(true);
+      setOpen(false);
+    }
   });
 
-  const lenis = useLenis();
-
   useEffect(() => {
-    if (open) lenis?.stop();
-    else lenis?.start();
-    document.documentElement.style.overflow = open ? "hidden" : "";
+    // The page keeps scrolling while the menu is open (no scroll lock)
+    openedAt.current = open ? window.scrollY : null;
     const onKey = (e: KeyboardEvent) => e.key === "Escape" && setOpen(false);
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [open, lenis]);
+  }, [open]);
 
   const light = !solid && !open;
 
@@ -79,7 +84,7 @@ export default function Nav() {
   return (
     <motion.header
       initial={{ opacity: 0, y: -12 }}
-      animate={{ opacity: 1, y: hidden && !open ? "-120%" : 0 }}
+      animate={{ opacity: 1, y: hidden && !open && !closing ? "-120%" : 0 }}
       transition={{ duration: 0.5, ease: settle, opacity: { delay: 1.0, duration: 0.8 } }}
       className="fixed inset-x-0 top-0 z-50 px-3 pt-3 sm:px-6 sm:pt-4"
     >
@@ -181,15 +186,28 @@ export default function Nav() {
         </div>
       </nav>
 
-      <AnimatePresence>
+      <AnimatePresence onExitComplete={() => setClosing(false)}>
         {open && (
           <motion.div
             id="mobile-menu"
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
+            // On short screens the menu scrolls on its own instead of moving the page
+            data-lenis-prevent
+            // Clip extends past the card so its shadow isn't cut off while open
+            initial={{ opacity: 0, y: -10, clipPath: "inset(-60px -60px -60px -60px)" }}
+            animate={{ opacity: 1, y: 0, clipPath: "inset(-60px -60px -60px -60px)" }}
+            // Close: roll up into the header like a blind being drawn, fading as it goes
+            exit={{
+              clipPath: "inset(-60px -60px 100% -60px)",
+              opacity: 0,
+              y: -6,
+              transition: {
+                clipPath: { duration: 0.55, ease: [0.65, 0, 0.35, 1] },
+                y: { duration: 0.55, ease: [0.65, 0, 0.35, 1] },
+                opacity: { duration: 0.3, delay: 0.25 },
+              },
+            }}
             transition={{ duration: 0.35, ease: settle }}
-            className="mx-auto mt-2 flex max-h-[calc(100svh-5rem)] max-w-[1440px] flex-col overflow-y-auto rounded-[28px] bg-white p-3 text-sumi shadow-2xl shadow-black/15 lg:hidden"
+            className="mx-auto mt-2 flex max-h-[calc(100svh-5rem)] max-w-[1440px] flex-col overflow-y-auto overscroll-contain rounded-[28px] bg-white p-3 text-sumi shadow-2xl shadow-black/15 lg:hidden"
           >
             <ul>
               {links.map((l, i) => (
