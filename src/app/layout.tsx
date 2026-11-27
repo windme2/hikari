@@ -10,7 +10,7 @@ const sans = Manrope({
 });
 
 export const metadata: Metadata = {
-  title: "Hikari — Made-to-measure curtains & blinds in Bangkok",
+  title: "Hikari | Made-to-measure curtains & blinds in Bangkok",
   description:
     "Curtains, sheers and blinds made to measure for your windows. Free home measuring and installation across greater Bangkok.",
 };
