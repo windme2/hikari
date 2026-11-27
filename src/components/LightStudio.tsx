@@ -6,6 +6,7 @@ import { useEffect, useId, useState } from "react";
 import Arrow from "./Arrow";
 import { RevealText, settle } from "./ui/motion";
 import { fabrics, photos } from "@/lib/content";
+import { pickFabric } from "@/lib/fabric-pick";
 
 // tint: multiplied over the photo · grade: soft-light colour grade · shade: colour the room falls to as light drops
 const times = [
@@ -276,6 +277,7 @@ export default function LightStudio() {
 
           <a
             href="#contact"
+            onClick={() => pickFabric({ id: fabric.id, name: fabric.name, pass: fabric.pass, tone: fabric.tone })}
             className="group mt-8 max-md:mt-6 flex shrink-0 items-center lg:mt-auto justify-between gap-3 rounded-full bg-sumi py-1.5 pl-6 pr-1.5 text-[13px] font-semibold text-white transition-colors hover:bg-sumi-soft"
           >
             Bring this fabric to my visit

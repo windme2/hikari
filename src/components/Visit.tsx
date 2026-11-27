@@ -2,10 +2,11 @@
 
 import Image from "next/image";
 import { AnimatePresence, motion, useScroll, useTransform } from "motion/react";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Arrow from "./Arrow";
 import { RevealText, settle } from "./ui/motion";
 import { brand, photos, visitSteps } from "@/lib/content";
+import { onFabricPick, type FabricPick } from "@/lib/fabric-pick";
 
 const socials = [
   {
@@ -30,6 +31,16 @@ export default function Visit() {
   const steps = useRef<HTMLOListElement>(null);
   const [sent, setSent] = useState(false);
   const [error, setError] = useState("");
+  // Fabric chosen in the Light Studio, brought along to the home visit
+  const [fabric, setFabric] = useState<FabricPick | null>(null);
+  useEffect(
+    () =>
+      onFabricPick((f) => {
+        setFabric(f);
+        setSent(false);
+      }),
+    [],
+  );
 
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "end start"] });
   const y = useTransform(scrollYProgress, [0, 1], ["-8%", "8%"]);
@@ -154,7 +165,8 @@ export default function Visit() {
                 </span>
                 <h3 className="mt-6 text-2xl font-semibold tracking-[-0.02em]">Request received</h3>
                 <p className="mt-2 text-[14px] leading-relaxed text-sumi/65">
-                  We’ll call you within one working day to book your free home visit.
+                  We’ll call you within one working day to book your free home visit
+                  {fabric ? <>, and we’ll bring <span className="font-semibold text-sumi">{fabric.name}</span> along.</> : "."}
                 </p>
                 <button
                   type="button"
@@ -168,6 +180,44 @@ export default function Visit() {
               <motion.form key="form" onSubmit={onSubmit} noValidate exit={{ opacity: 0 }} className="grid gap-3">
                 <h3 className="text-[22px] font-semibold tracking-[-0.02em]">Leave a request</h3>
                 <p className="mb-2 text-[13px] text-sumi/55">We reply within one working day.</p>
+                <AnimatePresence initial={false}>
+                  {fabric && (
+                    <motion.div
+                      key={fabric.id}
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: "auto" }}
+                      exit={{ opacity: 0, height: 0 }}
+                      transition={{ duration: 0.45, ease: settle }}
+                    >
+                      <input type="hidden" name="fabric" value={fabric.name} />
+                      <div className="mb-1 flex items-center gap-3 rounded-2xl bg-sunbeam/25 py-2 pl-2 pr-2 ring-1 ring-sunbeam/60">
+                        <span
+                          aria-hidden
+                          className="pleats size-9 shrink-0 rounded-xl ring-1 ring-black/5"
+                          style={{ backgroundColor: fabric.tone }}
+                        />
+                        <span className="min-w-0 flex-1 leading-tight">
+                          <span className="block text-[11px] font-semibold uppercase tracking-wider text-sumi/55">
+                            Bringing to your visit
+                          </span>
+                          <span className="block truncate text-[14px] font-semibold">
+                            {fabric.name} · {Math.round(fabric.pass * 100)}% light through
+                          </span>
+                        </span>
+                        <button
+                          type="button"
+                          onClick={() => setFabric(null)}
+                          aria-label={`Remove ${fabric.name}`}
+                          className="grid size-8 shrink-0 place-items-center rounded-full text-sumi/60 transition-colors hover:bg-white hover:text-sumi"
+                        >
+                          <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden>
+                            <path d="m2 2 8 8M10 2l-8 8" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+                          </svg>
+                        </button>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
                 <label className="sr-only" htmlFor="name">Your name</label>
                 <input id="name" name="name" autoComplete="name" placeholder="Your name" className={field} />
                 <label className="sr-only" htmlFor="phone">Phone number</label>
