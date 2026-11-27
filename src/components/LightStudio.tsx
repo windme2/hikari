@@ -44,9 +44,23 @@ export default function LightStudio() {
   return (
     <section id="studio" className="mx-auto max-w-[1440px] px-5 pb-24 sm:px-8 sm:pb-32">
       <div className="grid gap-4 lg:grid-cols-12 lg:items-start">
+        {/* Mobile intro sits above the stage, so the controls can live on the photo */}
+        <div className="px-1 pb-2 md:hidden">
+          <span className="inline-block rounded-full bg-white px-3 py-1.5 text-[11px] font-semibold uppercase tracking-wider">
+            Light Studio
+          </span>
+          <RevealText
+            text={"See the light\nbefore you buy"}
+            className="mt-4 text-[2rem] font-light leading-[1.1] tracking-[-0.03em]"
+          />
+          <p className="mt-3 text-[14px] leading-relaxed text-sumi/60">
+            Pick a fabric and slide to draw the curtains, right on the photo.
+          </p>
+        </div>
+
         {/* Stage */}
         <div
-          className="relative isolate aspect-[4/5] overflow-hidden rounded-[24px] bg-sumi sm:aspect-[16/11] lg:col-span-8 lg:aspect-auto lg:h-[720px]"
+          className="relative isolate aspect-[3/4] overflow-hidden rounded-[24px] bg-sumi sm:aspect-[16/11] lg:col-span-8 lg:aspect-auto lg:h-[720px]"
         >
           <Image
             src={photos.studio}
@@ -116,22 +130,70 @@ export default function LightStudio() {
             ))}
           </div>
 
+          {/* Mobile dock: fabric + curtains live on the photo, so every change is visible */}
+          <div className="absolute inset-x-3 bottom-3 rounded-[22px] bg-black/40 p-3 text-white ring-1 ring-white/15 backdrop-blur-md md:hidden">
+            <div className="flex items-center justify-between gap-3">
+              <div role="radiogroup" aria-label="Fabric" className="flex gap-1.5">
+                {fabrics.map((f) => {
+                  const active = f.id === fabricId;
+                  return (
+                    <button
+                      key={f.id}
+                      type="button"
+                      role="radio"
+                      aria-checked={active}
+                      aria-label={f.name}
+                      onClick={() => setFabricId(f.id)}
+                      className={`pleats size-10 rounded-full transition-[box-shadow,transform] duration-300 ${
+                        active ? "scale-105 ring-2 ring-white ring-offset-2 ring-offset-black/40" : "ring-1 ring-white/25"
+                      }`}
+                      style={{ backgroundColor: f.tone }}
+                    />
+                  );
+                })}
+              </div>
+              <motion.div
+                key={fabric.id}
+                initial={{ opacity: 0, y: 4 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4, ease: settle }}
+                className="min-w-0 text-right leading-tight"
+              >
+                <p className="truncate text-[13px] font-semibold">{fabric.name}</p>
+                <p className="text-[11px] text-white/65">{Math.round(fabric.pass * 100)}% light through</p>
+              </motion.div>
+            </div>
+            <div className="mt-2.5 flex items-center gap-3 border-t border-white/10 pt-2">
+              <span className="shrink-0 text-[11px] font-medium text-white/70">Curtains</span>
+              <input
+                type="range"
+                min={0}
+                max={100}
+                value={closed}
+                aria-label="Curtains closed"
+                onChange={(e) => setClosed(Number(e.target.value))}
+                className="studio-range studio-range--light"
+                style={{ "--fill": `${closed}%` } as React.CSSProperties}
+              />
+              <span className="w-10 shrink-0 text-right text-[12px] font-semibold tabular-nums">{closed}%</span>
+            </div>
+          </div>
         </div>
 
         {/* Controls */}
         <div className="flex flex-col rounded-[24px] bg-white p-6 sm:p-8 lg:col-span-4 lg:h-[720px]">
-          <span className="self-start rounded-full bg-washi px-3 py-1.5 text-[11px] font-semibold uppercase tracking-wider">
+          <span className="self-start rounded-full bg-washi px-3 max-md:hidden py-1.5 text-[11px] font-semibold uppercase tracking-wider">
             Light Studio
           </span>
           <RevealText
             text={"See the light\nbefore you buy"}
-            className="mt-5 text-[clamp(1.7rem,2.6vw,2.3rem)] font-light leading-[1.1] tracking-[-0.03em]"
+            className="mt-5 max-md:hidden text-[clamp(1.7rem,2.6vw,2.3rem)] font-light leading-[1.1] tracking-[-0.03em]"
           />
-          <p className="mt-3 text-[14px] leading-relaxed text-sumi/60">
+          <p className="mt-3 text-[14px] leading-relaxed text-sumi/60 max-md:hidden">
             Every fabric lets a different amount of daylight through. Pick one, then slide to draw the curtains.
           </p>
 
-          <fieldset className="mt-7">
+          <fieldset className="mt-7 max-md:hidden">
             <legend className="sr-only">Fabric</legend>
             <div className="grid grid-cols-2 gap-2">
               {fabrics.map((f) => {
@@ -176,7 +238,7 @@ export default function LightStudio() {
             </div>
           </fieldset>
 
-          <div className="mt-6">
+          <div className="mt-6 max-md:hidden">
             <div className="mb-1 flex items-baseline justify-between text-[13px]">
               <label htmlFor={rangeId} className="text-sumi/60">
                 Curtains closed
@@ -200,7 +262,7 @@ export default function LightStudio() {
             initial={{ opacity: 0, y: 6 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, ease: settle }}
-            className="mt-6 grid grid-cols-2 gap-4 border-t border-sumi/10 pt-5 text-[13px]"
+            className="mt-6 grid grid-cols-2 gap-4 border-t border-sumi/10 pt-5 text-[13px] max-md:mt-0 max-md:border-t-0 max-md:pt-0"
           >
             <div>
               <dt className="text-sumi/50">Privacy</dt>
@@ -214,7 +276,7 @@ export default function LightStudio() {
 
           <a
             href="#contact"
-            className="group mt-8 flex shrink-0 items-center lg:mt-auto justify-between gap-3 rounded-full bg-sumi py-1.5 pl-6 pr-1.5 text-[13px] font-semibold text-white transition-colors hover:bg-sumi-soft"
+            className="group mt-8 max-md:mt-6 flex shrink-0 items-center lg:mt-auto justify-between gap-3 rounded-full bg-sumi py-1.5 pl-6 pr-1.5 text-[13px] font-semibold text-white transition-colors hover:bg-sumi-soft"
           >
             Bring this fabric to my visit
             <span className="grid size-9 place-items-center rounded-full bg-white text-sumi transition-transform duration-500 group-hover:-rotate-45">

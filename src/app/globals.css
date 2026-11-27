@@ -140,3 +140,14 @@ html.lenis body {
   box-shadow: 0 0 0 1px rgb(0 0 0 / 0.08), 0 4px 12px rgb(0 0 0 / 0.18);
 }
 
+
+/* Light Studio slider, on the photo (mobile dock) */
+.studio-range--light {
+  height: 24px;
+}
+.studio-range--light::-webkit-slider-runnable-track {
+  background: linear-gradient(to right, #fff var(--fill), rgb(255 255 255 / 0.22) var(--fill));
+}
+.studio-range--light::-moz-range-track {
+  background: linear-gradient(to right, #fff var(--fill), rgb(255 255 255 / 0.22) var(--fill));
+}
