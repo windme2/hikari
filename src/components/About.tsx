@@ -15,8 +15,11 @@ export default function About() {
     <section id="about" className="mx-auto max-w-[1440px] px-5 pb-24 sm:px-8 sm:pb-32">
       <div className="grid gap-12 lg:grid-cols-2 lg:gap-16">
         <div>
-          <span className="inline-block rounded-full bg-washi-deep px-3 py-1.5 text-[11px] font-semibold uppercase tracking-wider">
+          <span className="inline-flex items-center gap-2.5 rounded-full bg-sumi py-2 pl-4 pr-2 text-[12px] font-semibold uppercase tracking-wider text-white shadow-[0_10px_30px_-10px_rgb(242_207_138/0.9)]">
             About Hikari
+            <span className="grid size-6 place-items-center rounded-full bg-sunbeam text-[12px] font-bold normal-case text-sumi">
+              光
+            </span>
           </span>
           <RevealText
             text={"Light, made\nto measure"}
