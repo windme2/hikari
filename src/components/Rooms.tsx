@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { AnimatePresence, motion, useInView } from "motion/react";
+import { AnimatePresence, motion, useInView, useReducedMotion } from "motion/react";
 import { useEffect, useRef, useState } from "react";
 import Arrow from "./Arrow";
 import { Chevron } from "./Catalog";
@@ -28,6 +28,9 @@ export default function Rooms() {
   const [ratios, setRatios] = useState<Record<string, number>>({});
   const frame = useRef<HTMLDivElement>(null);
   const swipe = useRef<number | null>(null);
+  // Reduced motion: plain crossfades, no blur (MotionConfig already drops the transforms)
+  const reduce = useReducedMotion();
+  const soft = (px: number) => (reduce ? "blur(0px)" : `blur(${px}px)`);
   const inView = useInView(frame, { margin: "-20% 0px" });
   const room = rooms[idx];
   const playing = inView && !hover && !peek;
@@ -119,7 +122,7 @@ export default function Rooms() {
           <motion.div
             key={room.id}
             className="absolute inset-0 -z-10"
-            initial={{ opacity: 0, scale: 1.08, filter: "blur(8px)" }}
+            initial={{ opacity: 0, scale: 1.08, filter: soft(8) }}
             animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
             exit={{ opacity: 0 }}
             transition={{ duration: 1.2, ease: settle }}
@@ -258,9 +261,9 @@ export default function Rooms() {
               <motion.span
                 key={room.id}
                 className="block whitespace-nowrap"
-                initial={{ y: "110%", opacity: 0, filter: "blur(4px)" }}
+                initial={{ y: "110%", opacity: 0, filter: soft(4) }}
                 animate={{ y: 0, opacity: 1, filter: "blur(0px)" }}
-                exit={{ y: "-110%", opacity: 0, filter: "blur(4px)" }}
+                exit={{ y: "-110%", opacity: 0, filter: soft(4) }}
                 transition={{ duration: 0.55, ease: settle }}
               >
                 {room.label}

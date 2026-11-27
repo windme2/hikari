@@ -8,6 +8,7 @@ export const settle = [0.22, 1, 0.36, 1] as const;
 /**
  * Word-by-word reveal: each word rises out of a soft blur, like text coming
  * into focus as light hits it. Use `\n` for line breaks.
+ * With reduced motion the text is shown as-is: no rise, blur or fade.
  */
 export function RevealText({
   text,
@@ -30,6 +31,30 @@ export function RevealText({
 }) {
   const lines = text.split("\n");
   const MotionTag = motion[Tag];
+  const reduce = useReducedMotion();
+
+  if (reduce) {
+    return (
+      <Tag className={className}>
+        {lines.map((line, li) => (
+          <span key={li} className={lineClassName}>
+            {line.split(" ").map((word, wi, words) => {
+              const bold = word.startsWith("*") && word.endsWith("*");
+              const w = bold ? word.slice(1, -1) : word;
+              return (
+                <span key={wi} className={bold ? "font-semibold" : undefined}>
+                  {w}
+                  {wi < words.length - 1 ? " " : ""}
+                </span>
+              );
+            })}
+            {li < lines.length - 1 ? " " : null}
+          </span>
+        ))}
+      </Tag>
+    );
+  }
+
   return (
     <MotionTag
       className={className}
