@@ -27,6 +27,7 @@ export default function Rooms() {
   const [box, setBox] = useState<Box | null>(null);
   const [ratios, setRatios] = useState<Record<string, number>>({});
   const frame = useRef<HTMLDivElement>(null);
+  const swipe = useRef<number | null>(null);
   const inView = useInView(frame, { margin: "-20% 0px" });
   const room = rooms[idx];
   const playing = inView && !hover && !peek;
@@ -106,6 +107,12 @@ export default function Rooms() {
         ref={frame}
         onPointerEnter={(e) => e.pointerType === "mouse" && setHover(true)}
         onPointerLeave={() => setHover(false)}
+        onTouchStart={(e) => (swipe.current = e.touches[0].clientX)}
+        onTouchEnd={(e) => {
+          const dx = e.changedTouches[0].clientX - (swipe.current ?? e.changedTouches[0].clientX);
+          swipe.current = null;
+          if (Math.abs(dx) > 50) select(idx + (dx < 0 ? 1 : -1));
+        }}
         className="relative isolate aspect-[4/5] overflow-hidden rounded-[24px] bg-sumi sm:aspect-[4/3] sm:rounded-[28px] md:aspect-auto md:h-[min(85svh,800px)] md:min-h-[560px]"
       >
         <AnimatePresence initial={false}>
@@ -236,12 +243,44 @@ export default function Rooms() {
           )}
         </AnimatePresence>
 
+        {/* Mobile: one badge on the photo; the word swaps as each room finishes. Tap for the next room. */}
+        <button
+          type="button"
+          onClick={() => select(idx + 1)}
+          aria-label={`${room.label}. Show next room`}
+          className="absolute bottom-4 left-4 flex items-center gap-2.5 overflow-hidden rounded-full bg-white/15 py-2 pl-2 pr-4 text-white ring-1 ring-white/30 backdrop-blur-md md:hidden"
+        >
+          <span className="grid size-7 place-items-center rounded-full bg-white text-sumi">
+            <Arrow className="size-3" />
+          </span>
+          <span className="relative block h-[18px] overflow-hidden text-[14px] font-semibold leading-[18px]">
+            <AnimatePresence mode="popLayout" initial={false}>
+              <motion.span
+                key={room.id}
+                className="block whitespace-nowrap"
+                initial={{ y: "110%", opacity: 0, filter: "blur(4px)" }}
+                animate={{ y: 0, opacity: 1, filter: "blur(0px)" }}
+                exit={{ y: "-110%", opacity: 0, filter: "blur(4px)" }}
+                transition={{ duration: 0.55, ease: settle }}
+              >
+                {room.label}
+              </motion.span>
+            </AnimatePresence>
+          </span>
+          <motion.span
+            key={`${room.id}-${playing}`}
+            aria-hidden
+            className="absolute inset-x-0 bottom-0 h-[2px] origin-left bg-sunbeam"
+            initial={{ scaleX: 0 }}
+            animate={{ scaleX: playing ? 1 : 0 }}
+            transition={{ duration: playing ? DURATION / 1000 : 0.3, ease: "linear" }}
+          />
+        </button>
+
         {/* Desktop room tabs */}
         <div className="absolute inset-x-6 bottom-6 hidden justify-center md:flex">{tabs}</div>
       </div>
 
-      {/* Mobile room tabs sit under the photo */}
-      <div className="mt-3 md:hidden">{tabs}</div>
     </section>
   );
 }
